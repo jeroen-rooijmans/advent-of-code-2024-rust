@@ -1,5 +1,7 @@
 // Advent of Code - Day 1: Historian Hysteria
 
+use std::iter::zip;
+
 const INPUT: &str = include_str!("./input.txt");
 
 fn parse_input(input: &str) -> (Vec<u32>, Vec<u32>) {
@@ -23,28 +25,19 @@ fn solve_part_one(input: &str) -> u32 {
     right.sort();
 
     // compute sum of distances
-    let total_distance = left
-        .iter()
-        .zip(right.iter())
-        .map(|(l, r)| l.abs_diff(*r))
-        .sum();
-
-    total_distance
+    zip(left, right).map(|(l, r)| l.abs_diff(r)).sum()
 }
 
 fn solve_part_two(input: &str) -> u32 {
     let (left, right) = parse_input(input);
 
-    // compute similarity score by multiplies each element in left list with its count in right list
-    let similarity_score = left
-        .iter()
+    // compute similarity score by multiplying each element in left list with its count in right list
+    left.iter()
         .map(|l| {
             let count = right.iter().filter(|r| *r == l).count() as u32;
             l * count
         })
-        .sum::<u32>();
-
-    similarity_score
+        .sum()
 }
 
 fn main() {
