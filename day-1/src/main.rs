@@ -1,7 +1,5 @@
 // Advent of Code - Day 1: Historian Hysteria
 
-use std::iter::zip;
-
 const INPUT: &str = include_str!("./input.txt");
 
 fn parse_input(input: &str) -> (Vec<u32>, Vec<u32>) {
@@ -25,7 +23,9 @@ fn solve_part_one(input: &str) -> u32 {
     right.sort();
 
     // compute sum of distances
-    zip(left, right).map(|(l, r)| l.abs_diff(r)).sum()
+    std::iter::zip(left, right)
+        .map(|(l, r)| l.abs_diff(r))
+        .sum()
 }
 
 fn solve_part_two(input: &str) -> u32 {
