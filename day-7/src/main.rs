@@ -102,6 +102,6 @@ mod tests {
 21037: 9 7 18 13
 292: 11 6 16 20";
         let answer = crate::solve_part_two(example_input);
-        assert_eq!(answer, u32::MAX);
+        assert_eq!(answer, 11387);
     }
 }
