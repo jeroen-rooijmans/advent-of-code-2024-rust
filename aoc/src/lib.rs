@@ -6,6 +6,18 @@ pub struct Coordinate<T> {
     pub y: T,
 }
 
+impl<T: Ord> Ord for Coordinate<T> {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.x.cmp(&other.x).then(self.y.cmp(&other.y))
+    }
+}
+
+impl<T: Ord> PartialOrd for Coordinate<T> {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
 impl<T: Add<Output = T>> Add for Coordinate<T> {
     type Output = Self;
     fn add(self, rhs: Self) -> Self::Output {
