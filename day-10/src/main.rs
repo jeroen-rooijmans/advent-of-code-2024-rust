@@ -71,8 +71,92 @@ fn find_trail(
             }
         }
     }
-
     None // No valid trail found!
+}
+
+fn find_all_trails(
+    map: &HashMap<Coordinate<usize>, u32>,
+    start: Coordinate<usize>,
+    end: Coordinate<usize>,
+) -> Vec<Vec<Coordinate<usize>>> {
+    let mut all_paths = Vec::new();
+    let mut current_path = vec![start];
+    let mut visited = HashSet::new();
+    let mut unique_paths = HashSet::new();
+    visited.insert(start);
+
+    find_all_trails_recursive(
+        map,
+        start,
+        end,
+        &mut current_path,
+        &mut visited,
+        &mut all_paths,
+        &mut unique_paths,
+    );
+
+    all_paths
+}
+
+fn find_all_trails_recursive(
+    map: &HashMap<Coordinate<usize>, u32>,
+    current: Coordinate<usize>,
+    end: Coordinate<usize>,
+    current_path: &mut Vec<Coordinate<usize>>,
+    visited: &mut HashSet<Coordinate<usize>>,
+    all_paths: &mut Vec<Vec<Coordinate<usize>>>,
+    unique_paths: &mut HashSet<Vec<Coordinate<usize>>>,
+) {
+    if current == end {
+        // only add the path if we haven't seen this exact sequence before
+        if unique_paths.insert(current_path.clone()) {
+            all_paths.push(current_path.clone());
+        }
+    }
+    let current_height = *map.get(&current).unwrap();
+
+    let possible_moves = [
+        Coordinate {
+            x: current.x + 1,
+            y: current.y,
+        },
+        Coordinate {
+            x: current.x.wrapping_sub(1),
+            y: current.y,
+        },
+        Coordinate {
+            x: current.x,
+            y: current.y + 1,
+        },
+        Coordinate {
+            x: current.x,
+            y: current.y.wrapping_sub(1),
+        },
+    ];
+
+    for next_pos in possible_moves.iter() {
+        if let Some(&next_height) = map.get(next_pos) {
+            if next_height == current_height + 1 && !visited.contains(next_pos) {
+                // try this path
+                visited.insert(*next_pos);
+                current_path.push(*next_pos);
+
+                find_all_trails_recursive(
+                    map,
+                    *next_pos,
+                    end,
+                    current_path,
+                    visited,
+                    all_paths,
+                    unique_paths,
+                );
+
+                // backtrack
+                visited.remove(next_pos);
+                current_path.pop();
+            }
+        }
+    }
 }
 
 fn solve_part_one(input: &str) -> usize {
@@ -99,8 +183,25 @@ fn solve_part_one(input: &str) -> usize {
     trails.len()
 }
 
-fn solve_part_two(_input: &str) -> usize {
-    42
+fn solve_part_two(input: &str) -> usize {
+    let topo_map: HashMap<Coordinate<usize>, u32> = input
+        .lines()
+        .enumerate()
+        .flat_map(|(y, line)| {
+            line.chars()
+                .enumerate()
+                .map(move |(x, ch)| (Coordinate { x, y }, ch.to_digit(10).unwrap()))
+        })
+        .collect();
+    let trailheads = find_coordinates_by_height(&topo_map, 0);
+    let tops = find_coordinates_by_height(&topo_map, 9);
+    trailheads
+        .iter()
+        .flat_map(|trailhead| {
+            tops.iter()
+                .map(|top| find_all_trails(&topo_map, *trailhead, *top).len())
+        })
+        .sum()
 }
 
 fn main() {
@@ -137,6 +238,6 @@ mod tests {
 01329801
 10456732";
         let answer = crate::solve_part_two(example_input);
-        assert_eq!(answer, 1337);
+        assert_eq!(answer, 81);
     }
 }
