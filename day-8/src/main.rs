@@ -3,7 +3,7 @@ use std::collections::{HashMap, HashSet};
 
 use itertools::Itertools;
 
-use aoc::Coordinate;
+use aoc::coord::Coordinate;
 
 const INPUT: &str = include_str!("./input.txt");
 

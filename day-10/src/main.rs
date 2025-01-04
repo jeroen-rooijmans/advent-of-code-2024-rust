@@ -2,7 +2,7 @@
 
 use std::collections::{HashMap, HashSet, VecDeque};
 
-use aoc::Coordinate;
+use aoc::coord::Coordinate;
 
 const INPUT: &str = include_str!("./input.txt");
 
