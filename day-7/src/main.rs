@@ -1,6 +1,6 @@
 // Advent of Code - Day 7: Bridge Repair
 
-use std::iter::repeat;
+use std::iter::repeat_n;
 
 use itertools::Itertools;
 
@@ -17,8 +17,7 @@ fn parse_into_equation(line: &str) -> (u64, Vec<u64>) {
 }
 
 fn operator_combinations(operators: &[char], n: usize) -> Vec<Vec<char>> {
-    repeat(operators)
-        .take(n)
+    repeat_n(operators, n)
         .multi_cartesian_product()
         .map(|v| v.into_iter().cloned().collect())
         .collect()
